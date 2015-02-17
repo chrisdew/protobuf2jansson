@@ -97,7 +97,7 @@
 } while (0)
 
 #define mu_print_json(variable) do { \
-  char *mu_json = json_dumps(variable, JSON_COMPACT|JSON_ENCODE_ANY); \
+  char *mu_json = json_dumps(variable, JSON_ENCODE_ANY|JSON_INDENT(2)|JSON_PRESERVE_ORDER); \
   fprintf(stderr, "[DEBUG] %20.20s:%3.0d:%30.30s %s: %s\n",  \
     __FILE__, __LINE__, __func__, #variable, mu_json             \
   );                                                       \
