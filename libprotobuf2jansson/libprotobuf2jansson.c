@@ -62,6 +62,26 @@ int wire_type_from_message_type(char *message_type) {
   exit(1);
 }
 
+char *p2j_camel_case_in_place(char *snake_case__mutated) {
+	size_t snake_case_length = strlen(snake_case__mutated);
+	char *end = snake_case__mutated + snake_case_length; // end points to \x00 at end of string
+	for (char *src = snake_case__mutated, *dst = snake_case__mutated; src <= end; src++) {
+		// if the last char is an underscore, just copy it literally (as touppering \x00 makes no sense)
+		if (*src == '_' && src + 1 != end) {
+			mu_print(src);
+			mu_print(dst);
+			*dst = toupper(*(src + 1));
+			src++; // jump a total of two characters
+		} else {
+			*dst = *src;
+		}
+		dst++;
+	}
+
+	return snake_case__mutated;
+}
+
+
 json_t *p2j_get_field_by_number(json_t *message, json_int_t number) {
     mu_return_null_if_false(json_is_object(message));
     json_t *fields = json_object_get(message, "field");

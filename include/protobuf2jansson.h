@@ -6,6 +6,8 @@
 
 extern void print_hello ();
 
+extern char *p2j_camel_case_in_place(char *snake_case__mutated);
+
 extern char *p2j_package_and_name_from_type_name(char *type_name__destroyed, char **package_out, char **name_list_out, size_t name_list_length);
 
 extern json_t *p2j_get_field_by_number(json_t *message, json_int_t number);

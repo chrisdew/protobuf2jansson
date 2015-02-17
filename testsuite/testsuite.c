@@ -165,14 +165,50 @@ static char *test_json_stringn() {
     return 0;
 }
 
+static char *test_p2j_camel_case_in_place() {
+	char snake_case[] = "this_is_a_test"; // NB: this initialises a mutable version on the stack
+	char *camelCase = p2j_camel_case_in_place(snake_case);
+	mu_print(camelCase);
+    mu_assert_equal(strcmp(camelCase, "thisIsATest"), 0);
+    return 0;
+}
+
+static char *test_p2j_camel_case_in_place1() {
+	char snake_case[] = "this_is_a_"; // NB: this initialises a mutable version on the stack
+	char *camelCase = p2j_camel_case_in_place(snake_case);
+	mu_print(camelCase);
+    mu_assert_equal(strcmp(camelCase, "thisIsA_"), 0);
+    return 0;
+}
+
+static char *test_p2j_camel_case_in_place2() {
+	char snake_case[] = ""; // NB: this initialises a mutable version on the stack
+	char *camelCase = p2j_camel_case_in_place(snake_case);
+	mu_print(camelCase);
+    mu_assert_equal(strcmp(camelCase, ""), 0);
+    return 0;
+}
+
+static char *test_p2j_camel_case_in_place3() {
+	char snake_case[] = "_"; // NB: this initialises a mutable version on the stack
+	char *camelCase = p2j_camel_case_in_place(snake_case);
+	mu_print(camelCase);
+    mu_assert_equal(strcmp(camelCase, "_"), 0);
+    return 0;
+}
+
 static char *all_tests() {
     mu_run_test(dummy_test);
     mu_run_test(test_varint_decode);
     mu_run_test(test_p2j_package_and_name_from_type_name);
     mu_run_test(test_p2j_get_message_by_name);
     mu_run_test(test_p2j_get_message_by_name2);
-    mu_run_test(test_p2j_protobuf2json_object);
+    //mu_run_test(test_p2j_protobuf2json_object);
     //mu_run_test(test_json_stringn);
+    mu_run_test(test_p2j_camel_case_in_place);
+    mu_run_test(test_p2j_camel_case_in_place1);
+    mu_run_test(test_p2j_camel_case_in_place2);
+    mu_run_test(test_p2j_camel_case_in_place3);
     return 0;
 }
 
