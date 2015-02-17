@@ -1,0 +1,1 @@
+SUBDIRS=libprotobuf2jansson include testsuite

@@ -1,0 +1,87 @@
+libprotobuf2jansson_la-libprotobuf2jansson.lo: libprotobuf2jansson.c \
+  ../include/protobuf2jansson.h /usr/include/stdio.h \
+  /usr/include/features.h /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/bin/../lib/clang/3.4/include/stddef.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h /usr/include/libio.h \
+  /usr/include/_G_config.h /usr/include/wchar.h \
+  /usr/bin/../lib/clang/3.4/include/stdarg.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
+  /usr/local/include/jansson.h /usr/include/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/local/include/jansson_config.h \
+  /usr/bin/../lib/clang/3.4/include/stdint.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.9/include/stdint.h \
+  /usr/include/stdint.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/string.h /usr/include/ctype.h /usr/include/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h minunit.h varint.h \
+  meta_descriptor.json.h
+
+../include/protobuf2jansson.h:
+
+/usr/include/stdio.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/bin/../lib/clang/3.4/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/wchar.h:
+
+/usr/bin/../lib/clang/3.4/include/stdarg.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+
+/usr/local/include/jansson.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/local/include/jansson_config.h:
+
+/usr/bin/../lib/clang/3.4/include/stdint.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.9/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+/usr/include/string.h:
+
+/usr/include/ctype.h:
+
+/usr/include/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
+minunit.h:
+
+varint.h:
+
+meta_descriptor.json.h:

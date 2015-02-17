@@ -1,0 +1,16 @@
+This is a very early version of a library which converts a protobuf serialised 
+message and a .desc file describing the message format into a Jansson JSON 
+object, which can be serialised to a string.
+
+This avoid recompiling a C executable each time you make minor changes to .proto
+files (assuming you need to output JSON).
+
+
+Configure with: 
+
+CC=clang ./configure
+
+unless you have gcc-4.9 or later, until I find some answers to:
+
+http://stackoverflow.com/questions/28557945/how-to-make-autotools-generated-configure-enforce-availability-of-c11s-gener
+http://stackoverflow.com/questions/28558206/make-autotools-add-std-c11-to-cflags
