@@ -203,7 +203,7 @@ AUTOMAKE = automake-1.14
 AWK = gawk
 CC = clang
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -std=c11 -O0 -g
+CFLAGS = -g -O2 -std=c11 -O0 -g -Wall -Wextra -Wpedantic
 CPP = clang -E
 CPPFLAGS = 
 CYGPATH_W = echo

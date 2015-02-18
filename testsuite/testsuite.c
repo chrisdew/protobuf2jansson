@@ -82,7 +82,7 @@ static char *test_p2j_get_message_by_name() {
 
     mu_assert(meta_desc);
 
-    json_t *message = p2j_get_message_by_name(meta_desc, ".google.protobuf.FileDescriptorSet");
+    json_t *message = p2j_get_message_by_name(meta_desc, ".google.protobuf.FileDescriptorSet", &error);
     mu_assert(message);
 
     mu_assert(json_is_object(message));
@@ -100,7 +100,7 @@ static char *test_p2j_get_message_by_name2() {
     json_t *meta_desc = json_loads((char *)p2j_meta_descriptor_json, 0, &error);
     mu_assert(meta_desc);
 
-    json_t *message = p2j_get_message_by_name(meta_desc, ".google.protobuf.DescriptorProto.ExtensionRange");
+    json_t *message = p2j_get_message_by_name(meta_desc, ".google.protobuf.DescriptorProto.ExtensionRange", &error);
     mu_assert(message);
 
     mu_assert(json_is_object(message));
@@ -114,10 +114,11 @@ static char *test_p2j_get_message_by_name2() {
 }
 
 static char *test_p2j_package_and_name_from_type_name() {
+   json_error_t error;
    char destroyable[] = ".foo.bar.Nested.Name";
    char *package;
    char *name_list[] = {NULL, NULL, NULL, NULL};
-   char *result = p2j_package_and_name_from_type_name(destroyable, &package, name_list, sizeof(name_list)/sizeof(name_list[0]));
+   char *result = p2j_package_and_name_from_type_name(destroyable, &package, name_list, sizeof(name_list)/sizeof(name_list[0]), &error);
    mu_assert(result);
    mu_assert_equal_str(package,"foo.bar");
    mu_assert_equal_str(name_list[0],"Nested");
@@ -145,7 +146,7 @@ static char *test_p2j_protobuf2json_object() {
     json_t *desc = json_loads((char *)p2j_meta_descriptor_json, 0, &error);
     mu_assert(desc);
 
-    json_t *result = p2j_protobuf2json_object(desc, ".google.protobuf.FileDescriptorSet", protobuf_data, sizeof(protobuf_data));
+    json_t *result = p2j_protobuf2json_object(desc, ".google.protobuf.FileDescriptorSet", protobuf_data, sizeof(protobuf_data), P2J_OPTION_WILL_NOT_HANDLE_FRAGMENTED_REPEATED_FIELDS | P2J_OPTION_ENUMS_AS_STRINGS, &error);
     mu_assert(result);
     mu_print_json(result);
     json_decref(result);
@@ -203,8 +204,8 @@ static char *all_tests() {
     mu_run_test(test_p2j_package_and_name_from_type_name);
     mu_run_test(test_p2j_get_message_by_name);
     mu_run_test(test_p2j_get_message_by_name2);
-    //mu_run_test(test_p2j_protobuf2json_object);
-    //mu_run_test(test_json_stringn);
+    mu_run_test(test_p2j_protobuf2json_object);
+    mu_run_test(test_json_stringn);
     mu_run_test(test_p2j_camel_case_in_place);
     mu_run_test(test_p2j_camel_case_in_place1);
     mu_run_test(test_p2j_camel_case_in_place2);

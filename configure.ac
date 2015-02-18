@@ -22,7 +22,7 @@ dnl Libtool is used for building share libraries
 AC_PROG_LIBTOOL
 
 AC_PROG_CC
-CFLAGS+=" -std=c11 -O0 -g"
+CFLAGS+=" -std=c11 -O0 -g -Wall -Wextra -Wpedantic"
 
 AC_CONFIG_FILES(Makefile
                 testsuite/Makefile
