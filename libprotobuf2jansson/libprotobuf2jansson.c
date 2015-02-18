@@ -411,6 +411,10 @@ json_t *p2j_protobuf2length_delimited(json_t *desc, const char *type, const char
 
 
 json_t *p2j_protobuf2json_object(json_t *desc, const char *message_name, const char *buffer, size_t length, int options, json_error_t *error__out) {
+	if (!(options & P2J_OPTION_WILL_NOT_HANDLE_FRAGMENTED_REPEATED_FIELDS)) {
+		p2j_return_null_with_error("At present you must acknowledge the P2J_OPTION_WILL_NOT_HANDLE_FRAGMENTED_REPEATED_FIELDS issue.");
+	}
+
     mu_print((char *)">>>>>>>>");
     //json_error_t error;
 
