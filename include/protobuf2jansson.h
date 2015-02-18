@@ -19,5 +19,6 @@ extern json_t *p2j_get_message_by_name(json_t *descriptor, const char *name, jso
 
 // You only need this function.  The others are just provided so that the testsuite can test them.
 extern json_t *p2j_protobuf2json_object(json_t *desc, const char *message_name, const char *buffer, size_t length, int options, json_error_t *error__out);
+// FIXME: add notes about neededing P2J_OPTION_WILL_NOT_HANDLE_FRAGMENTED_REPEATED_FIELDS and enforce its requirement in the function
 
 #endif

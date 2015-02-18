@@ -45,8 +45,10 @@
 	snprintf(error__out->text, sizeof(error__out->text), format, ##__VA_ARGS__); \
     error__out->text[JSON_ERROR_TEXT_LENGTH - 1] = '\x00'; /* snprintf is mad, it doesn't make the destination end with a \x00 if the source is larger */\
 	snprintf(error__out->source, sizeof(error__out->source), "%s:%d %s", __FILE__, __LINE__, __func__); \
-    error__out->text[JSON_ERROR_TEXT_LENGTH - 1] = '\x00'; /* snprintf is mad, it doesn't make the destination end with a \x00 if the source is larger */\
+    error__out->source[JSON_ERROR_SOURCE_LENGTH - 1] = '\x00'; /* snprintf is mad, it doesn't make the destination end with a \x00 if the source is larger */\
     error__out->line = __LINE__; \
+    fprintf(stderr, "%s: %s\n", error__out->text, error__out->source); \
+    fflush(stderr); \
 	return return_value; \
 } while (0)
 
@@ -73,6 +75,8 @@
 		snprintf(error__out->source, sizeof(error__out->source), "%s:%d %s", __FILE__, __LINE__, __func__); \
 		error__out->text[JSON_ERROR_TEXT_LENGTH - 1] = '\x00'; /* snprintf is mad, it doesn't make the destination end with a \x00 if the source is larger */\
 		error__out->line = __LINE__; \
+        fprintf(stderr, "%s: %s\n", error__out->text, error__out->source); \
+        fflush(stderr); \
     	return NULL; \
     } \
 } while (0)
@@ -96,6 +100,8 @@
 		snprintf(error__out->source, sizeof(error__out->source), "%s:%d %s", __FILE__, __LINE__, __func__); \
 		error__out->text[JSON_ERROR_TEXT_LENGTH - 1] = '\x00'; /* snprintf is mad, it doesn't make the destination end with a \x00 if the source is larger */\
 		error__out->line = __LINE__; \
+        fprintf(stderr, "%s: %s\n", error__out->text, error__out->source); \
+        fflush(stderr); \
 		return NULL; \
 	} \
 } while (0)
@@ -124,6 +130,8 @@
 		snprintf(error__out->source, sizeof(error__out->source), "%s:%d %s", __FILE__, __LINE__, __func__); \
 		error__out->text[JSON_ERROR_TEXT_LENGTH - 1] = '\x00'; /* snprintf is mad, it doesn't make the destination end with a \x00 if the source is larger */\
 		error__out->line = __LINE__; \
+        fprintf(stderr, "%s: %s\n", error__out->text, error__out->source); \
+        fflush(stderr); \
     	return NULL; \
     } \
 } while (0)
@@ -246,8 +254,18 @@ json_t *p2j_get_nested_message_by_name(json_t *nodes, char **remaining_names, js
                 return node;
             } else { // otherwise recurse into the next level
                 json_t *nestedTypes = json_object_get(node, "nestedType");
-                mu_return_null_if_null(nestedTypes);
-                return p2j_get_nested_message_by_name(nestedTypes, remaining_names + 1, error__out);
+                //mu_print_json(nestedTypes);
+                json_t *message = p2j_get_nested_message_by_name(nestedTypes, remaining_names + 1, error__out);
+                //mu_print_json(message);
+                if (!message) {
+                    json_t *enumTypes = json_object_get(node, "enumType");
+                    mu_print_json(enumTypes);
+                	message = p2j_get_nested_message_by_name(enumTypes, remaining_names + 1, error__out);
+                }
+                if (!message) {
+                	p2j_return_null_with_error("could not find (nested) message");
+                }
+                return message;
             }
         }
     }
@@ -288,7 +306,7 @@ json_t *p2j_get_message_by_name(json_t *descriptor, const char *type_name, json_
     p2j_return_null_with_error("unable to find message by name (%s)", type_name);
 }
 
-json_t *p2j_protobuf2varint(json_t *desc, const char *type, const char *message_name, const char *buffer, size_t length, size_t *bytes_parsed, int options, json_error_t *error__out) {
+json_t *p2j_protobuf2varint(json_t *desc, const char *type, const char *message_name, const json_t *field, const char *buffer, size_t length, size_t *bytes_parsed, int options, json_error_t *error__out) {
     mu_print((uint8_t *)desc);
     mu_print(type);
     mu_print(message_name);
@@ -301,20 +319,54 @@ json_t *p2j_protobuf2varint(json_t *desc, const char *type, const char *message_
     enum p2j_varint_result_enum result = p2j_varint_decode((uint8_t *)buffer, length, (size_t *) &varint, &num);
     p2j_return_null_with_error_if_not_equal(result, P2J_VARINT_PARSED);
 
-    json_t *value = NULL;
+    json_t *return_value = NULL;
     if (strcmp(type, TYPE_INT32) == 0) {
-        value = json_integer(varint);
+        return_value = json_integer(varint);
     } else if (strcmp(type, TYPE_SINT32) == 0) {
         exit(3);
     } else if (strcmp(type, TYPE_BOOL) == 0) {
-        value = json_boolean(varint);
+        return_value = json_boolean(varint);
     } else if (strcmp(type, TYPE_ENUM) == 0) {
-        // FIXME: we should allow this to return either a JSON int or a JSNO string under user control
-        value = json_integer(varint);
+    	if (options & P2J_OPTION_ENUMS_AS_STRINGS) {
+    		mu_print_json(field);
+    		mu_print(options);
+    		mu_print(type);
+    		mu_print(message_name);
+    		json_t *field_type_name = json_object_get(field, "typeName");
+    		mu_print_json(field_type_name);
+    		p2j_return_null_with_error_if_false(json_is_string(field_type_name));
+    		const char *field_type_name_cstring = json_string_value(field_type_name);
+    		json_t *enumeration = p2j_get_message_by_name(desc, field_type_name_cstring, error__out);
+    		mu_print_json(enumeration);
+    		p2j_return_null_with_error_if_null(enumeration);
+    		json_t *values = json_object_get(enumeration, "value");
+    		p2j_return_null_with_error_if_null(values);
+    		mu_print_json(values);
+    		p2j_return_null_with_error_if_false(json_is_array(values));
+    		for (size_t i = 0; i < json_array_size(values); i++) {
+    			json_t *value = json_array_get(values, i);
+    		    mu_print_json(value);
+    			p2j_return_null_with_error_if_false(json_is_object(value));
+    			json_t *name = json_object_get(value, "name");
+    		    mu_print_json(name);
+    			p2j_return_null_with_error_if_false(json_is_string(name));
+    			json_t *number = json_object_get(value, "number");
+    		    mu_print_json(number);
+    			p2j_return_null_with_error_if_false(json_is_integer(number));
+    			if (json_integer_value(number) == (json_int_t) varint) {
+    				return_value = name;
+    				mu_print_json(value);
+    				break;
+    			}
+    		}
+    	} else {
+    		return_value = json_integer(varint);
+    	}
+    	mu_print_json(return_value);
     }
     *bytes_parsed = num;
-    mu_print_json(value);
-    return value;
+    mu_print_json(return_value);
+    return return_value;
 }
 //json_t *p2j_protobuf2_64bit(json_t *desc, char *type, char *message_name, char *buffer, size_t length, size_t *bytes_parsed) {
 //    return NULL;
@@ -412,7 +464,7 @@ json_t *p2j_protobuf2json_object(json_t *desc, const char *message_name, const c
         bytes_parsed = 0;
         switch (field_wire_type) {
             case WIRE_TYPE_VARINT:
-                value = p2j_protobuf2varint(desc, type, message_name, buffer, length, &bytes_parsed, options, error__out);
+                value = p2j_protobuf2varint(desc, type, message_name, field, buffer, length, &bytes_parsed, options, error__out);
                 //exit(3);
                 break;
             case WIRE_TYPE_64_BIT:
@@ -456,7 +508,7 @@ json_t *p2j_protobuf2json_object(json_t *desc, const char *message_name, const c
 
 
         buffer += bytes_parsed; length -= bytes_parsed;
-        mu_return_null_if_null(value);
+        p2j_return_null_with_error_if_null(value);
 
         const char *field_label = json_string_value(json_object_get(field, "label"));
         mu_print(field_label);

@@ -77,6 +77,7 @@
         char *:        "%s:%i asserted: %s, reality: %s == %s"   \
       ),                                                         \
       __FILE__, __LINE__, #test, #test, test);                   \
+    mu_message[MAX_ERROR_MESSAGE_LENGTH - 1] = '\x00'; /* snprintf destination doesn't end with a null if the source is longer */\
     return mu_message;                                              \
   } \
 } while (0)
@@ -128,6 +129,7 @@
         char *:        "%s:%i required: %s == %p, reality: %s == %p"                      \
       ),                                                                                  \
       __FILE__, __LINE__, #actual, #expected, #actual, actual);                           \
+    mu_message[MAX_ERROR_MESSAGE_LENGTH - 1] = '\x00'; /* snprintf destination doesn't end with a null if the source is longer */\
     return mu_message;                                                                       \
   }                                                                                       \
 } while (0)
@@ -144,6 +146,7 @@
         char *:        "%s:%i required: %s != %p, reality: %s == %p"                      \
       ),                                                                                  \
       __FILE__, __LINE__, #actual, #not_expected, #actual, actual);                           \
+    mu_message[MAX_ERROR_MESSAGE_LENGTH - 1] = '\x00'; /* snprintf destination doesn't end with a null if the source is longer */\
     return mu_message;                                                                       \
   }                                                                                       \
 } while (0)
@@ -153,8 +156,9 @@
     char *mu_message = malloc(MAX_ERROR_MESSAGE_LENGTH);                                     \
     if (mu_message == NULL) { printf("malloc failed"); exit(1); }                            \
     snprintf(mu_message, MAX_ERROR_MESSAGE_LENGTH,                                  \
-      "%s:%i required: %s == %s, reality: %s == %s",                      \
-      __FILE__, __LINE__, #actual, #expected, #actual, actual);                           \
+      "%s:%i %s (%.20s) != %s (%.20s)",                      \
+      __FILE__, __LINE__, #actual, actual, #expected, expected);                           \
+    mu_message[MAX_ERROR_MESSAGE_LENGTH - 1] = '\x00'; /* snprintf destination doesn't end with a null if the source is longer */\
     return mu_message;                                                                       \
   }                                                                                       \
 } while (0)
